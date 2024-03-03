@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <meta name="description" content="Abhilekh&#x27;s Blog site. Mostly about programming.">
+        
+
+        <title>Abhilekh Blogs</title>
+
+        
+            <link rel="stylesheet" href="https://blog.abhilekhgautam.com.np/theme.css">
+        
+        
+    </head>
+    <body>
+        <div class="content">
+        
+        
+            <header>
+                <div class="header-left">
+                    <a href="https:&#x2F;&#x2F;blog.abhilekhgautam.com.np" class="logo">Abhilekh Blogs</a>
+                </div>
+                <div class="header-right">
+                    <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                      <ul>
+                        
+                        
+                            
+                            <li class="nav">
+                                <a itemprop="url" href="https://blog.abhilekhgautam.com.np/blog/">
+                                    <span itemprop="name">Abhilekh Blogs</span>
+                                </a>
+                            </li>
+                        
+                        
+                        <li class="nav">
+                            <a itemprop="url" href="https://github.com/Abhilekhgautam">
+                                <img class="icon" src="https:&#x2F;&#x2F;blog.abhilekhgautam.com.np/icons/github.svg" alt="Github">
+                            </a>
+                        </li>
+                        
+                        
+                        <li class="nav">
+                            <a itemprop="url" href="https://twitter.com/abhilekh_gautam">
+                                <img class="icon" src="https:&#x2F;&#x2F;blog.abhilekhgautam.com.np/icons/twitter.svg" alt="Twitter">
+                            </a>
+                        </li>
+                        
+                      </ul>
+                    </nav>
+                </div>
+            </header>
+        
+        
+        <main>
+            
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <div itemprop="headline">
+        <h1>Writing a Word Recommendation system in C++</h1>
+        <div class="border"></div>
+        <time datetime="2024-01-14" class="date" itemprop="datePublished">
+            14 Jan 2024
+        </time>
+    </div>
+    <div itemprop="articleBody">
+        <p>I always wondered, how my search engine most of the time exactly guessed what
+I wanted to search by looking at the few words, I type in the search bar.
+In this article I'd try to implement similar feature myself in C++.</p>
+<h2 id="objective">Objective</h2>
+<p>To guess next word(s) of a given word in a sentence.</p>
+<h2 id="how">How?</h2>
+<p>First up we'll need lots of data, yup a lot of data to make correct predictions. But we will just work with small amount of dummy data.</p>
+<p>We'll work by using a very well known algorithm that works on the basis of probability and it is </p>
+<h4 id="the-naive-bayes-algorithm">The Naive-Bayes Algorithm</h4>
+<p>Let's say we have two sentences in our data.</p>
+<ul>
+<li>I love you my sweet heart.</li>
+<li>I love you my maiyya.</li>
+</ul>
+<p>Now what we'll do is just calculate the probability of occurence of each words after the given word.</p>
+<p>If we have to guess the word(s) after the word 'I' we have to calculate the probability of occurence of every word that occurred after 'I' and the one above certain threshold is recommended.</p>
+<p>For our above data, the probability of occurence of the word &quot;love&quot; after the word &quot;I&quot; is 100% because it appears every time after the word &quot;I&quot;, so the word &quot;love&quot; will be recommended by our system. But we won't stop there because we want to guess the entire sentence, so we'll again then calculate the probability of occurence of every word after the word &quot;love&quot;, in this case the word &quot;you&quot; has the highest probability (100%), we will continue this same process until we don't find the word having probability greater or equal to certain threshold value.</p>
+<p>In this case, &quot;love you my&quot; will be recommended by the system if we typed in the word &quot;I&quot;.</p>
+<h3 id="the-data-structure-setup">The Data Structure Setup</h3>
+<h4 id="requirement">Requirement</h4>
+<p>We need to keep track of words that appear after every word and their frequency as well.</p>
+<p>For every new word we encounter in our data set, we assign a <code>std::unordered_map&lt;std::string, int&gt;</code> that holds the frequencies of the next word appearing after that word which is stored in a <code>std::vector</code>. The index of the <code>std::vector</code> is stored in another <code>std::unordered_map&lt;std::string, int&gt;</code> where the key is the word we encounter and value is the index.</p>
+<h3 id="implementation">Implementation</h3>
+<p>Assuming we have our data set in the file <code>data.txt</code> which is pre-processed as per our requirement.</p>
+<p>We start by defining a <code>struct</code> </p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#b48ead;">struct </span><span>Recommendation{
+</span><span> std::string word;
+</span><span> </span><span style="color:#b48ead;">float</span><span> probability;
+</span><span>};
+</span></code></pre>
+<p>and then we also need some globals,</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span>std::unordered_map&lt;std::string, </span><span style="color:#b48ead;">long</span><span>&gt; Index;
+</span><span>std::vector&lt;std::unordered_map&lt;std::string, </span><span style="color:#b48ead;">long</span><span>&gt;&gt; LookUp;
+</span></code></pre>
+<p>Now we can start defining our function <code>RecommendeWord</code>. This function
+takes a single argument, a word whose preceeding word(s) is to predicted.</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span>Recommendation </span><span style="color:#8fa1b3;">RecommendWord</span><span>(</span><span style="color:#b48ead;">const</span><span> std::string&amp; </span><span style="color:#bf616a;">word</span><span>){
+</span><span>    </span><span style="color:#b48ead;">auto</span><span> Found = Index.</span><span style="color:#bf616a;">find</span><span>(word);
+</span><span>    </span><span style="color:#b48ead;">if</span><span>(Found == Index.</span><span style="color:#bf616a;">end</span><span>()) </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">Recommendation</span><span>{};
+</span><span>    </span><span style="color:#b48ead;">else</span><span>{
+</span><span>        </span><span style="color:#b48ead;">auto</span><span> LookUpIndex = Index[word];
+</span><span>	    </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">TotalOccurence</span><span>{};
+</span><span>        </span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#b48ead;">const auto</span><span>&amp; [word, count]: LookUp[LookUpIndex]){
+</span><span>          TotalOccurence += count;  
+</span><span>        }
+</span><span>     	</span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#b48ead;">const auto</span><span>&amp; [word, count]: LookUp[LookUpIndex]){
+</span><span>       	  </span><span style="color:#b48ead;">float</span><span> Probability = (</span><span style="color:#b48ead;">float</span><span>)count / (</span><span style="color:#b48ead;">float</span><span>)TotalOccurence;
+</span><span>	      </span><span style="color:#b48ead;">if</span><span>(Probability &gt;= PROBABILITY_THRESHOLD){
+</span><span>	       </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">Recommendation</span><span>{word, Probability}; 
+</span><span>	      }
+</span><span>	    }
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">Recommendation</span><span>{};
+</span><span>      }
+</span><span>}
+</span></code></pre>
+<p>We start by checking if we have the input word in our data set, if not we exit early.
+If the word is found, we will take its lookup index for the <code>LookUp</code> vector.</p>
+
+    </div>
+</article>
+
+        </main>
+        
+        <footer>
+            
+            <div class="border"></div>
+            <div class="footer">
+                <small class="footer-left">
+                    Copyright &copy; Abhilekh Gautam
+                </small>
+                <small class="footer-right">
+                    Powered by <a href="https://www.getzola.org">Zola</a> | Theme <a href="https://github.com/barlog-m/oceanic-zen">Oceanic Zen</a>
+                </small>
+            </div>
+        
+        </footer>
+    
+        </div>
+    </body>
+</html>
