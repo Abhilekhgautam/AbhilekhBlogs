@@ -52,7 +52,7 @@ std::unordered_map<std::string, long> Index;
 std::vector<std::unordered_map<std::string, long>> LookUp;
 ```
 Now we can start defining our function `RecommendeWord`. This function
-takes a single argument.
+takes a single argument, a word whose preceeding word(s) is to predicted.
 
 ```cpp
 Recommendation RecommendWord(const std::string& word){
@@ -60,17 +60,19 @@ Recommendation RecommendWord(const std::string& word){
     if(Found == Index.end()) return Recommendation{};
     else{
         auto LookUpIndex = Index[word];
-	int TotalOccurence{};
+	    int TotalOccurence{};
         for(const auto& [word, count]: LookUp[LookUpIndex]){
           TotalOccurence += count;  
         }
-	for(const auto& [word, count]: LookUp[LookUpIndex]){
+     	for(const auto& [word, count]: LookUp[LookUpIndex]){
        	  float Probability = (float)count / (float)TotalOccurence;
-	  if(Probability >= PROBABILITY_THRESHOLD){
-	     return Recommendation{word, Probability}; 
-	  }
-	}
+	      if(Probability >= PROBABILITY_THRESHOLD){
+	       return Recommendation{word, Probability}; 
+	      }
+	    }
         return Recommendation{};
-    }
+      }
 }
 ```
+We start by checking if we have the input word in our data set, if not we exit early.
+If the word is found, we will take its lookup index for the `LookUp` vector.
