@@ -1,6 +1,9 @@
 # The URL the site will be built for
 base_url = "https://blog.abhilekhgautam.com.np"
 
+title = "Abhilekh Blogs"
+description = "Abhilekh's Blog site. Mostly about programming."
+
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = false
 
