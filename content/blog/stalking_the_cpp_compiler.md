@@ -184,7 +184,9 @@ Whenever a procedure is called, space for the variables are created in the stack
 Registers are memory unit within the CPU. Since they are within the CPU (processor) they are very quick to access. The properties of the registers are processor dependent. Anyways we will look into very few registers used by the compiler in the previously generated code.
 
 1) `eax`: 32 bit general purpose register.
+
 2) `rsp`: Stack Pointer Register. Points to the current top of the stack. It stores the address of the current top of stack.
+
 3) `rbp`: Base Pointer Register. Used as a reference pointer during function call.
 
 Now we have all the basics required to look into the entire generated assembly.
