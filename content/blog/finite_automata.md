@@ -139,7 +139,7 @@ Now, lets see how we can define the transition function for this DFA.
 
 A transition function takes two inputs - the current state and the input. It outputs the state where the automata should transit to.
 
-So, when we are at the state `A` and encounter the symbol `a` we stay at the state `a`, so we write
+So, when we are at the state `A` and encounter the symbol `a` we stay at the state `A`, so we write
 
 ```
 TF(A, a) = A
@@ -160,5 +160,6 @@ TF(B, b) = A
 
 1. [Flex](https://en.wikipedia.org/wiki/Flex_(lexical_analyser_generator)) - The Lexical analyzer generator, uses the concept of Finite Automata.
 
+This is it for this article.
 
-
+Happy Learning!
