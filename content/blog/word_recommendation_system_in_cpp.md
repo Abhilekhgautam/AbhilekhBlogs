@@ -18,14 +18,14 @@ We'll work by using a very well known algorithm that works on the basis of proba
 #### The Naive-Bayes Algorithm
 Let's say we have two sentences in our data.
 
-* I love you my sweet heart.
-* I love you my maiyya.
+* I enjoy writing C++.
+* I enjoy writing C.
 
 Now what we'll do is just calculate the probability of occurence of each words after the given word.
 
 If we have to guess the word(s) after the word 'I' we have to calculate the probability of occurence of every word that occurred after 'I' and the one above certain threshold is recommended.
 
-For our above data, the probability of occurence of the word "love" after the word "I" is 100% because it appears every time after the word "I", so the word "love" will be recommended by our system. But we won't stop there because we want to guess the entire sentence, so we'll again then calculate the probability of occurence of every word after the word "love", in this case the word "you" has the highest probability (100%), we will continue this same process until we don't find the word having probability greater or equal to certain threshold value.
+For our above data, the probability of occurence of the word "enjoy" after the word "I" is 100% because it appears every time after the word "I", so the word "enjoy" will be recommended by our system. But we won't stop there because we want to guess the entire sentence, so we'll again then calculate the probability of occurence of every word after the word "love", in this case the word "writing" has the highest probability (100%), we will continue this same process until we don't find the word having probability greater or equal to certain threshold value.
 
 In this case, "love you my" will be recommended by the system if we typed in the word "I".
 
