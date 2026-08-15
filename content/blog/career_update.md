@@ -5,7 +5,7 @@ date = 2026-08-15
 
 After careful consideration, I've left my role as a C++ Systems Engineer at Guardware Australia.
 
-This decision is mainly based on what I want to do in the coming year.I want to spend more time pursuing my interests in programming languages and compilers, with the long-term goal of pursuing a career in academia.
+This decision is mainly based on what I want to do in the coming year.I want to spend more time pursuing my interests in programming languages and compilers.
 
 I'll miss the people, the gossip, the fun, the banters and more importantly writing my beloved programming language C++.
 
